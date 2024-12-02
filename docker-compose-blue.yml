@@ -1,0 +1,155 @@
+version: "3"
+services:
+  frontend-blue:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    image: frontend:blue # 이미지 이름 지정
+    container_name: frontend-blue
+    ports:
+      - "3000:80"
+    networks:
+      - webnet
+    restart: always
+
+  eureka-server-blue:
+    build:
+      context: ./back/eureka
+      dockerfile: Dockerfile
+    image: eureka-server:blue # 이미지 이름 지정
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - webnet
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+
+  api-gateway-blue:
+    build:
+      context: ./back/gateway
+      dockerfile: Dockerfile
+    image: api-gateway:blue # 이미지 이름 지정
+    container_name: api-gateway
+    ports:
+      - "8765:8765"
+    depends_on:
+      - eureka-server-blue
+    networks:
+      - webnet
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+
+  payment-blue:
+    build:
+      context: ./back/payment
+      dockerfile: Dockerfile
+    image: payment:blue # 이미지 이름 지정
+    container_name: payment-blue
+    ports:
+      - "18010:8080"
+    networks:
+      - webnet
+    depends_on:
+      - eureka-server-blue
+      - api-gateway-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_PROFILES_COLOR=blue
+
+  moapay-blue:
+    build:
+      context: ./back/moapay
+      dockerfile: Dockerfile
+    image: moapay:blue # 이미지 이름 지정
+    container_name: moapay-blue
+    ports:
+      - "18020:8080"
+    networks:
+      - webnet
+    depends_on:
+      - eureka-server-blue
+      - api-gateway-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_PROFILES_COLOR=blue
+
+  settlement-blue:
+    build:
+      context: ./back/settlement
+      dockerfile: Dockerfile
+    image: settlement:blue # 이미지 이름 지정
+    container_name: settlement-blue
+    ports:
+      - "18030:8080"
+    networks:
+      - webnet
+    depends_on:
+      - eureka-server-blue
+      - api-gateway-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_PROFILES_COLOR=blue
+
+  member-blue:
+    build:
+      context: ./back/member
+      dockerfile: Dockerfile
+    image: member:blue # 이미지 이름 지정
+    container_name: member-blue
+    ports:
+      - "18040:8080"
+    networks:
+      - webnet
+    depends_on:
+      - eureka-server-blue
+      - api-gateway-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_PROFILES_COLOR=blue
+
+  cardbank-blue:
+    build:
+      context: ./back/cardbank
+      dockerfile: Dockerfile
+    image: cardbank:blue # 이미지 이름 지정
+    container_name: cardbank
+    ports:
+      - "18100:8080"
+    networks:
+      - webnet
+    depends_on:
+      - eureka-server-blue
+      - api-gateway-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+
+  store-blue:
+    build:
+      context: ./back/store
+      dockerfile: Dockerfile
+    image: store:blue # 이미지 이름 지정
+    container_name: store
+    ports:
+      - "18200:8080"
+    networks:
+      - webnet
+    depends_on:
+      - eureka-server-blue
+      - api-gateway-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+
+networks:
+  webnet:
+    external: true

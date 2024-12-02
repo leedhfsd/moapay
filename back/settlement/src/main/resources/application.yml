@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: settlement
+
+  config:
+    import: "configserver:${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}"
+
+  cloud:
+    config:
+      name: settlement
+      profile: ${SPRING_PROFILES_ACTIVE:local}

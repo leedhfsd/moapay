@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: cardbank
+
+  config:
+    import: "configserver:${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}"
+
+  cloud:
+    config:
+      name: cardbank
+      profile: ${SPRING_PROFILES_ACTIVE:local}

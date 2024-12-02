@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: moapay
+
+  config:
+    import: "configserver:${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}"
+
+  cloud:
+    config:
+      name: moapay
+      profile: ${SPRING_PROFILES_ACTIVE:local}
